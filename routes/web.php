@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SetupController;
 use App\Http\Controllers\Site\EnquiryController;
 use App\Http\Controllers\Site\PageController;
 use App\Http\Controllers\Site\SitemapController;
@@ -25,3 +26,11 @@ Route::get('/sitemap.xml', SitemapController::class)->name('site.sitemap');
 |--------------------------------------------------------------------------
 */
 require __DIR__.'/settings.php';
+
+/*
+|--------------------------------------------------------------------------
+| First-run setup (only while no users exist; 404 afterwards)
+|--------------------------------------------------------------------------
+*/
+Route::get('/setup', [SetupController::class, 'show'])->name('setup');
+Route::post('/setup', [SetupController::class, 'store'])->middleware('throttle:5,1')->name('setup.store');

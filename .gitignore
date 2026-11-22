@@ -45,3 +45,4 @@ yarn-error.log
 # NativePHP build artefacts
 /dist
 /nativephp/electron/node_modules
+/nativephp/

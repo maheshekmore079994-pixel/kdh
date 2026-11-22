@@ -13,6 +13,8 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
+        User::factory()->create(); // with no users the login page redirects to first-run setup
+
         $response = $this->get(route('login'));
 
         $response->assertOk();

@@ -59,3 +59,13 @@ Legend: ☐ pending · ◐ in progress · ☑ done. Keep this file current.
 ## Issues / notes
 - Node 21 was too old for vite-plus; upgraded to Node 26 LTS.
 - `composer lint`/pint from cmd needs PHP on the Windows PATH (added to user PATH).
+
+## Phase 2 — Shop-floor improvements (planned 2026-11-22)
+- ☑ First-run setup page (`/setup`) for fresh installs, including the desktop app
+- ☑ Dev server moved to port 8010 (`SERVER_PORT`), code pushed to github.com/maheshekmore079994-pixel/kdh
+- ☐ Operator rate card: read-only, searchable price list of all services and variants for operators, plus a printable/QR rate card for the counter
+- ☐ Service portal directory: official portal URL, required documents checklist and notes per service; "Open portal" button on jobs (opens the official site in the browser, operator still submits manually)
+- ☐ Customer document checklist per job (received / returned) and a "documents returned to customer" step before delivery
+- ☐ Quick customer lookup on POS by mobile with last jobs and dues; WhatsApp "job ready" message link (opens WhatsApp, operator sends)
+- ☐ Desktop-to-hosted migration: export local desktop data and import into the hosted MySQL once hosting is back
+- ☐ Hosting: deploy to server, MySQL, HTTPS, cron, backups off-site; then rebuild the desktop app with KDH_SERVER_URL set

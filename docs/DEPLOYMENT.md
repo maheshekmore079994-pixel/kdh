@@ -103,3 +103,33 @@ How it works: `NativeAppServiceProvider` opens one window; when `KDH_SERVER_URL`
 login page, so all data lives on the server and the installer carries no database credentials
 (`cleanup_env_keys` also strips `DB_*` and `MAIL_*` secrets). Without `KDH_SERVER_URL` the embedded Laravel
 app runs locally against SQLite (developer use only). Internet is required; there is no offline mode.
+
+### Building the Windows installer on this PC (verified 2026-11-22)
+Run from Git Bash in the project folder:
+```
+export NODE_EXTRA_CA_CERTS="C:\Users\admin\bin\certs\cacert.pem"   # Node must trust the Avast scanning root
+export npm_config_cafile="C:\Users\admin\bin\certs\cacert.pem"
+sed -i 's/^APP_DEBUG=true/APP_DEBUG=false/' .env                           # operators never see debug pages
+NATIVEPHP_APP_NAME="Khadavli Digital Hub" NATIVEPHP_APP_ID=in.khadavlidigitalhub.app \
+  php artisan native:build win --no-interaction
+sed -i 's/^APP_DEBUG=false/APP_DEBUG=true/' .env                           # restore local debugging
+```
+Output: `nativephp/electron/dist/Khadavli Digital Hub-<version>-setup.exe` (≈145 MB, git-ignored).
+
+Known issues and fixes:
+- **Stalls at "Updating Electron dependencies"**: Node does not use the Windows certificate store, so the Avast
+  HTTPS scanner blocks downloads. `NODE_EXTRA_CA_CERTS` fixes it. The step is slow (≈10 s per package) but works.
+- **"Cannot create symbolic link: A required privilege is not held"**: electron-builder's `winCodeSign` archive
+  contains macOS symlinks. Either enable Windows Developer Mode, or extract once by hand (the macOS files are not
+  needed): `7za x -y -o%LOCALAPPDATA%\electron-builder\Cache\winCodeSign\winCodeSign-2.6.0 <cached>.7z`
+  using `vendor/nativephp/desktop/resources/electron/node_modules/7zip-bin/win/x64/7za.exe`. Already done on this PC.
+- **App exits instantly when launched from VS Code / Claude Code terminals**: those shells set
+  `ELECTRON_RUN_AS_NODE=1`. Launch from Explorer/Start menu, or `env -u ELECTRON_RUN_AS_NODE ./app.exe`.
+- **Unsigned installer**: Windows SmartScreen shows "Windows protected your PC" → *More info* → *Run anyway*.
+  Buy a code-signing certificate later to remove this.
+- **"INSECURE BUILD" warning**: the PHP source ships readable inside the install folder. Acceptable for an
+  in-house operator tool; see NativePHP docs on secure bundles if this changes.
+
+Desktop data location: `%APPDATA%\khadavli-digital-hub` (`database\database.sqlite`, `storage\app\private` for
+documents). Back this folder up daily while the shop runs on the desktop app without hosting.
+First launch shows **First-time setup** to create the administrator.

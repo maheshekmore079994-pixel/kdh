@@ -36,7 +36,9 @@ class AppServiceProvider extends ServiceProvider
 
         DB::prohibitDestructiveCommands(app()->isProduction());
 
-        if (app()->isProduction()) {
+        // Force https links only when the site itself is served over https (hosted server).
+        // The desktop app runs as "production" but serves plain http on 127.0.0.1.
+        if (app()->isProduction() && str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }
 
